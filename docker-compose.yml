@@ -1,0 +1,19 @@
+version: '3'
+services:
+    rabbitmq:
+        image: rabbitmq:3.6-management-alpine
+        ports:
+            - "5672:5672"
+            - "15672:15672"
+    config-service:
+        build: ./config-service
+        ports:
+            - "8888:8888"
+    discovery-service:
+        build: ./discovery-service
+        depends_on:
+            - config-service
+        ports:
+            - "8761:8761"
+        links:
+            - config-service:config-service-docker
