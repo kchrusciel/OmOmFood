@@ -10,11 +10,16 @@ import pl.codecouple.omomfood.offerservice.offer.domain.OfferFacade
 import pl.codecouple.omomfood.offerservice.offer.dto.CreateOfferDto
 import pl.codecouple.omomfood.offerservice.offer.dto.OfferDto
 import pl.codecouple.omomfood.offerservice.offer.exceptions.AuthorNotFound
+import pl.codecouple.omomfood.offerservice.offer.exceptions.OfferNotFound
 import spock.lang.Specification
 
+import static org.mockito.Mockito.doNothing
 import static org.mockito.Mockito.when
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -30,7 +35,7 @@ class OfferControllerSpec extends Specification {
     OfferFacade facade
     ObjectMapper mapper = new ObjectMapper()
 
-    def "Should throw 'Author not found' when author ID not exists"() {
+    def "Should throw 'Author not found' when create offer and author ID not exists"() {
         given:
             def offerToCreate = CreateOfferDto.builder()
                     .authorId(0)
@@ -85,17 +90,57 @@ class OfferControllerSpec extends Specification {
                     .andExpect(status().isOk())
     }
 
-    def "should return 'no offer found' when offer with given id didn't exist"() {
-
+    def "Should throw 'Offer not found' when update offer which not exists"() {
+        given:
+            def offerToUpdate = OfferDto.builder()
+                    .id(0)
+                    .build()
+            when(facade.update(offerToUpdate)).thenThrow(OfferNotFound)
+        when:
+            def result = offer.perform(put("/offers")
+                    .content(mapper.writeValueAsString(offerToUpdate))
+                    .contentType(MediaType.APPLICATION_JSON_UTF8))
+        then:
+            result.andExpect(status().isNotFound())
+                    .andExpect(status().reason("Offer not found"))
     }
 
-    def "should return 'offer deleted' when offer is deleted"() {
-
+    def "should return updated offer when update offer"() {
+        given:
+            def offerToUpdate = OfferDto.builder()
+                    .id(1)
+                    .build()
+            when(facade.update(offerToUpdate)).thenReturn(offerToUpdate)
+        when:
+            def result = offer.perform(put("/offers")
+                    .content(mapper.writeValueAsString(offerToUpdate))
+                    .contentType(MediaType.APPLICATION_JSON_UTF8))
+        then:
+            result.andExpect(content().json(mapper.writeValueAsString(offerToUpdate)))
+                    .andExpect(status().isNoContent())
     }
 
-    def "should return updated offer when offer is updated"() {
-
+    def "should return updated offer when partial update offer"() {
+        given:
+            def offerToUpdate = OfferDto.builder()
+                    .id(1)
+                    .build()
+            when(facade.updateFields(1, new HashMap<String, Object>())).thenReturn(offerToUpdate)
+        when:
+            def result = offer.perform(patch("/offers/1")
+                    .content(mapper.writeValueAsString(new HashMap<String, Object>()))
+                    .contentType(MediaType.APPLICATION_JSON_UTF8))
+        then:
+            result.andExpect(content().json(mapper.writeValueAsString(offerToUpdate)))
+                    .andExpect(status().isNoContent())
     }
 
-
+    def "should return 'Offer deleted' when offer is deleted"() {
+        given:
+            doNothing().when(facade).delete(1)
+        when:
+            def result = offer.perform(delete("/offers/1"))
+        then:
+            result.andExpect(status().isNoContent())
+    }
 }

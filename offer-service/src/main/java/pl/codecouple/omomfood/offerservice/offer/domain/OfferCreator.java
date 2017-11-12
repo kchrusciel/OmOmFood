@@ -1,6 +1,7 @@
 package pl.codecouple.omomfood.offerservice.offer.domain;
 
 import pl.codecouple.omomfood.offerservice.offer.dto.CreateOfferDto;
+import pl.codecouple.omomfood.offerservice.offer.dto.OfferDto;
 
 import static java.util.Objects.requireNonNull;
 
@@ -14,6 +15,16 @@ class OfferCreator {
                 .title(createOfferDto.getTitle())
                 .content(createOfferDto.getContent())
                 .authorId(createOfferDto.getAuthorId())
+                .build();
+    }
+
+    Offer from(OfferDto offerDto) {
+        requireNonNull(offerDto);
+        return Offer.builder()
+                .id(offerDto.getId())
+                .title(offerDto.getTitle())
+                .content(offerDto.getContent())
+                .authorId(offerDto.getAuthorId())
                 .build();
     }
 }

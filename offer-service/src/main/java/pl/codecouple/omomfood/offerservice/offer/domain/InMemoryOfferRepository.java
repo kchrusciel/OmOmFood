@@ -16,7 +16,9 @@ class InMemoryOfferRepository implements OfferRepository{
     @Override
     public Offer save(Offer offer) {
         requireNonNull(offer);
-        offer.setId(++counter);
+        if (!map.containsKey(offer.getId())) {
+            offer.setId(++counter);
+        }
         map.put(counter, offer);
         return offer;
     }
@@ -24,5 +26,15 @@ class InMemoryOfferRepository implements OfferRepository{
     @Override
     public List<Offer> findAll() {
         return new ArrayList<>(map.values());
+    }
+
+    @Override
+    public Offer findById(long id) {
+        return map.get(id);
+    }
+
+    @Override
+    public void deleteById(long id) {
+        map.remove(id);
     }
 }
