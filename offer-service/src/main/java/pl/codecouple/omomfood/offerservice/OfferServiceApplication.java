@@ -4,6 +4,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 
+/**
+ * Created by CodeCouple.pl
+ */
 @SpringBootApplication
 @EnableEurekaClient
 public class OfferServiceApplication {

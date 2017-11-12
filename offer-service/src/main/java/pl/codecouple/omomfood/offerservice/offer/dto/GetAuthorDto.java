@@ -1,6 +1,9 @@
 package pl.codecouple.omomfood.offerservice.offer.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Created by CodeCouple.pl
@@ -9,8 +12,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CreateOfferDto {
-    private String title;
-    private String content;
+public class GetAuthorDto {
     private long authorId;
 }

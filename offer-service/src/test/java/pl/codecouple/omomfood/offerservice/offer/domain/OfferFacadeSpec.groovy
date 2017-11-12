@@ -1,30 +1,67 @@
 package pl.codecouple.omomfood.offerservice.offer.domain
 
 import pl.codecouple.omomfood.offerservice.offer.dto.CreateOfferDto
+import pl.codecouple.omomfood.offerservice.offer.dto.GetAuthorDto
+import pl.codecouple.omomfood.offerservice.offer.exceptions.AuthorNotFound
 import spock.lang.Specification
 
+/**
+ * Created by CodeCouple.pl
+ */
 class OfferFacadeSpec extends Specification {
 
+    AuthorService authorService = Mock()
     InMemoryOfferRepository offerRepository = new InMemoryOfferRepository()
-    OfferFacade offerFacade = new OfferFacade(offerRepository)
+    OfferFacade offerFacade = new OfferConfiguration().offerFacade(offerRepository, authorService)
     OfferCreator offerCreator = new OfferCreator()
 
-    def "should add new offer to db"(){
+    def "Should throw AuthorNotFound when author not found"() {
         given:
-            CreateOfferDto offerToAdd = new CreateOfferDto()
+            def offerToCreate = CreateOfferDto.builder()
+                    .authorId(1)
+                    .build()
+            def getAuthor = GetAuthorDto.builder()
+                    .authorId(1)
+                    .build()
+            authorService.getAuthor(getAuthor) >> { throw new AuthorNotFound() }
         when:
-            offerFacade.add(offerToAdd)
+            offerFacade.createOffer(offerToCreate)
         then:
-            offerRepository.findAll().size() == 1
+            AuthorNotFound e = thrown()
+            e.message == "Author not found"
     }
 
-    def "should return all offers from db"(){
+    def "Should add new offer"() {
         given:
-            CreateOfferDto offerToAdd = new CreateOfferDto()
-            offerRepository.save(offerCreator.from(offerToAdd))
+            def offerToCreate = CreateOfferDto.builder()
+                    .authorId(10)
+                    .title("title")
+                    .content("content")
+                    .build()
         when:
-            def result = offerFacade.findAll().size()
+            def result = offerFacade.createOffer(offerToCreate)
         then:
-            result == 1
+            result.getId() == 1
+            result.getAuthorId() == 10
+            result.getTitle() == "title"
+            result.getContent() == "content"
+    }
+
+    def "Should return all offers"() {
+        given:
+            def offerToCreate = CreateOfferDto.builder()
+                    .authorId(10)
+                    .title("title")
+                    .content("content")
+                    .build()
+            offerRepository.save(offerCreator.from(offerToCreate))
+        when:
+            def result = offerFacade.findAll()
+        then:
+            result.size() == 1
+            result.get(0).getId() == 1
+            result.get(0).getAuthorId() == 10
+            result.get(0).getTitle() == "title"
+            result.get(0).getContent() == "content"
     }
 }

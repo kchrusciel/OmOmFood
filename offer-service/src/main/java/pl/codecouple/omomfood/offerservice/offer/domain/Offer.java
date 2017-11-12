@@ -11,6 +11,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+/**
+ * Created by CodeCouple.pl
+ */
 @Builder
 @Entity
 @NoArgsConstructor
@@ -22,14 +25,14 @@ class Offer {
     private long id;
     private String title;
     private String content;
-    private long userId;
+    private long authorId;
 
     OfferDto dto() {
         return OfferDto.builder()
                 .id(id)
                 .title(title)
                 .content(content)
-                .userId(userId)
+                .authorId(authorId)
                 .build();
     }
 }

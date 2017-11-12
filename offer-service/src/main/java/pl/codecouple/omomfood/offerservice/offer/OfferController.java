@@ -1,15 +1,16 @@
 package pl.codecouple.omomfood.offerservice.offer;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 import pl.codecouple.omomfood.offerservice.offer.domain.OfferFacade;
 import pl.codecouple.omomfood.offerservice.offer.dto.CreateOfferDto;
 import pl.codecouple.omomfood.offerservice.offer.dto.OfferDto;
 
 import java.util.List;
 
+/**
+ * Created by CodeCouple.pl
+ */
 @RestController
 @RequestMapping("/offers")
 class OfferController {
@@ -21,9 +22,9 @@ class OfferController {
     }
 
     @PostMapping
-    String addOffer(CreateOfferDto offerToAdd) {
-        offerFacade.add(offerToAdd);
-        return "Offer created";
+    @ResponseStatus(HttpStatus.CREATED)
+    OfferDto createOffer(@RequestBody CreateOfferDto offerToCreate) {
+        return offerFacade.createOffer(offerToCreate);
     }
 
     @GetMapping
