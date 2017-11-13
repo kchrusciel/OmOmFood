@@ -1,12 +1,11 @@
 package pl.codecouple.omomfood.reservation;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
 import pl.codecouple.omomfood.reservation.domain.ReservationFacade;
 import pl.codecouple.omomfood.reservation.dto.CreateReservationDTO;
+import pl.codecouple.omomfood.reservation.dto.ReservationDTO;
 
 /**
  * Created by CodeCouple.pl
@@ -21,11 +20,12 @@ class ReservationController {
         this.facade = facade;
     }
 
-    @PostMapping
+    @PostMapping(
+            consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    String createReservation(CreateReservationDTO reservationToCreate){
-        facade.createReservation(reservationToCreate);
-        return "Reservation created";
+    ReservationDTO createReservation(@RequestBody CreateReservationDTO reservationToCreate){
+        return facade.createReservation(reservationToCreate);
     }
 
 }

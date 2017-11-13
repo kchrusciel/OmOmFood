@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import pl.codecouple.omomfood.reservation.dto.ReservationDTO;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 /**
  * Created by CodeCouple.pl
@@ -18,14 +20,16 @@ import javax.persistence.Entity;
 @Builder
 class Reservation {
 
-    private long reservationID;
+    @Id
+    @GeneratedValue
+    private long id;
     private long offerID;
     private long authorID;
     private long quantity;
 
     ReservationDTO dto() {
         return ReservationDTO.builder()
-                .reservationID(reservationID)
+                .id(id)
                 .offerID(offerID)
                 .authorID(authorID)
                 .quantity(quantity)

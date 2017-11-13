@@ -17,7 +17,9 @@ class InMemoryReservationRepository implements ReservationRepository {
     @Override
     public Reservation save(Reservation reservation) {
         requireNonNull(reservation);
-        reservation.setReservationID(++counter);
+        if (!map.containsKey(counter)) {
+            reservation.setId(++counter);
+        }
         map.put(counter, reservation);
         return reservation;
     }
@@ -25,5 +27,15 @@ class InMemoryReservationRepository implements ReservationRepository {
     @Override
     public List<Reservation> findAll() {
         return new ArrayList<>(map.values());
+    }
+
+    @Override
+    public Reservation findById(long id) {
+        return map.get(id);
+    }
+
+    @Override
+    public void deleteById(long id) {
+        map.remove(id);
     }
 }

@@ -2,6 +2,7 @@ package pl.codecouple.omomfood.reservation.domain;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * Created by CodeCouple.pl
@@ -9,9 +10,14 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 class ReservationConfiguration {
 
+    @Bean
+    RestTemplate restTemplate(){
+        return new RestTemplate();
+    }
+
     ReservationFacade reservationFacade() {
-        return reservationFacade(new AuthorService(),
-                                 new OfferService(),
+        return reservationFacade(new AuthorService(restTemplate()),
+                                 new OfferService(restTemplate()),
                                  new InMemoryReservationRepository());
     }
 

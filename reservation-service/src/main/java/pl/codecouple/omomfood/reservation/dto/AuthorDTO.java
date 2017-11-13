@@ -12,11 +12,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ReservationDTO {
+public class AuthorDTO {
 
-    private long id;
-    private long offerID;
     private long authorID;
-    private long quantity;
 
 }
