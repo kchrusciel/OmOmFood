@@ -1,10 +1,10 @@
 package pl.codecouple.omomfood.reservation.domain
 
 import pl.codecouple.omomfood.reservation.dto.CreateReservationDTO
-import pl.codecouple.omomfood.reservation.dto.GetAuthorDTO
+import pl.codecouple.omomfood.reservation.dto.GetUserDTO
 import pl.codecouple.omomfood.reservation.dto.GetOfferDTO
 import pl.codecouple.omomfood.reservation.dto.ReservationDTO
-import pl.codecouple.omomfood.reservation.exceptions.AuthorNotFound
+import pl.codecouple.omomfood.reservation.exceptions.UserNotFound
 import pl.codecouple.omomfood.reservation.exceptions.CannotCreateReservation
 import pl.codecouple.omomfood.reservation.exceptions.OfferNotFound
 import pl.codecouple.omomfood.reservation.exceptions.ReservationNotFound
@@ -14,7 +14,7 @@ import spock.lang.Specification
  */
 class ReservationFacadeSpec extends Specification {
 
-    AuthorService authorService = Mock()
+    UserService authorService = Mock()
     OfferService offerService = Mock()
     InMemoryReservationRepository repository = new InMemoryReservationRepository()
     ReservationCreator creator = new ReservationCreator()
@@ -25,12 +25,16 @@ class ReservationFacadeSpec extends Specification {
     def "Should throw OfferNotFound when offer not found"() {
         given:
             def reservationToCreate = CreateReservationDTO.builder()
-                    .authorID(1)
+                    .userID(1)
                     .offerID(1)
+                    .build()
+            def getAuthor = GetUserDTO.builder()
+                    .userID(1)
                     .build()
             def getOffer = GetOfferDTO.builder()
                     .offerID(1)
                     .build()
+            authorService.isUserAvailable(getAuthor) >> { return true }
             offerService.isOfferAvailable(getOffer) >> { throw new OfferNotFound() }
         when:
             reservationFacade.createReservation(reservationToCreate)
@@ -42,28 +46,28 @@ class ReservationFacadeSpec extends Specification {
     def "Should throw AuthorNotFound when author not found"() {
         given:
             def reservationToCreate = CreateReservationDTO.builder()
-                    .authorID(1)
+                    .userID(1)
                     .offerID(1)
                     .build()
-            def getAuthor = GetAuthorDTO.builder()
-                    .authorID(1)
+            def getAuthor = GetUserDTO.builder()
+                    .userID(1)
                     .build()
             def getOffer = GetOfferDTO.builder()
                     .offerID(1)
                     .build()
             offerService.isOfferAvailable(getOffer) >> { return true }
-            authorService.isAuthorAvailable(getAuthor) >> { throw new AuthorNotFound() }
+            authorService.isUserAvailable(getAuthor) >> { throw new UserNotFound() }
         when:
             reservationFacade.createReservation(reservationToCreate)
         then:
-            AuthorNotFound e = thrown()
-            e.message == "Author not found"
+            UserNotFound e = thrown()
+            e.message == "User not found"
     }
 
     def "Should return all reservations"() {
         given:
             def reservationToCreate = CreateReservationDTO.builder()
-                .authorID(1)
+                .userID(1)
                 .offerID(1)
                 .build()
             repository.save(creator.from(reservationToCreate))
@@ -71,7 +75,7 @@ class ReservationFacadeSpec extends Specification {
             def result = reservationFacade.findAll()
         then:
             result.size() == 1
-            result.get(0).getAuthorID() == 1
+            result.get(0).getUserID() == 1
             result.get(0).getOfferID() == 1
             result.get(0).getQuantity() == 0
             result.get(0).getId() == 1
@@ -80,21 +84,21 @@ class ReservationFacadeSpec extends Specification {
     def "Should add new reservation"() {
         given:
             def reservationToCreate = CreateReservationDTO.builder()
-                    .authorID(10)
+                    .userID(10)
                     .offerID(1)
                     .build()
-            def getAuthor = GetAuthorDTO.builder()
-                    .authorID(10)
+            def getAuthor = GetUserDTO.builder()
+                    .userID(10)
                     .build()
             def getOffer = GetOfferDTO.builder()
                     .offerID(1)
                     .build()
             offerService.isOfferAvailable(getOffer) >> { return true }
-            authorService.isAuthorAvailable(getAuthor) >> { return true }
+            authorService.isUserAvailable(getAuthor) >> { return true }
         when:
             def result = reservationFacade.createReservation(reservationToCreate)
         then:
-            result.getAuthorID() == 10
+            result.getUserID() == 10
             result.getOfferID() == 1
             result.getQuantity() == 0
     }
@@ -102,7 +106,7 @@ class ReservationFacadeSpec extends Specification {
     def "Should throw CannotCreateReservation exception when problems occurs" () {
         given:
             def reservationToCreate = CreateReservationDTO.builder()
-                    .authorID(10)
+                    .userID(10)
                     .offerID(1)
                     .build()
             def getOffer = GetOfferDTO.builder()
@@ -127,7 +131,7 @@ class ReservationFacadeSpec extends Specification {
     def "Should return reservation by id" () {
         given:
             def reservationToCreate = CreateReservationDTO.builder()
-                    .authorID(1)
+                    .userID(1)
                     .offerID(1)
                     .build()
             repository.save(creator.from(reservationToCreate))
@@ -140,7 +144,7 @@ class ReservationFacadeSpec extends Specification {
     def "Should delete reservation by id" () {
         given:
             def reservationToCreate = CreateReservationDTO.builder()
-                    .authorID(1)
+                    .userID(1)
                     .offerID(1)
                     .build()
             repository.save(creator.from(reservationToCreate))
@@ -153,13 +157,13 @@ class ReservationFacadeSpec extends Specification {
     def "Should update reservation" () {
         given:
             def reservationToCreate = CreateReservationDTO.builder()
-                    .authorID(1)
+                    .userID(1)
                     .offerID(1)
                     .build()
             repository.save(creator.from(reservationToCreate))
             def reservationToUpdate = ReservationDTO.builder()
                     .id(1)
-                    .authorID(1)
+                    .userID(1)
                     .offerID(1)
                     .quantity(10)
                     .build()
@@ -172,7 +176,7 @@ class ReservationFacadeSpec extends Specification {
     def "Should partial update reservation" () {
         given:
             def reservationToCreate = CreateReservationDTO.builder()
-                    .authorID(1)
+                    .userID(1)
                     .offerID(1)
                     .quantity(10)
                     .build()

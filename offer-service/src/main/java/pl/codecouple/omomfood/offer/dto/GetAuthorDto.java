@@ -1,4 +1,4 @@
-package pl.codecouple.omomfood.reservation.dto;
+package pl.codecouple.omomfood.offer.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,11 +12,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ReservationDTO {
-
-    private long id;
-    private long offerID;
-    private long userID;
-    private long quantity;
-
+public class GetAuthorDto {
+    private long authorId;
 }

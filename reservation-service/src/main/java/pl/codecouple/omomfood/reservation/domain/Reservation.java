@@ -31,7 +31,7 @@ class Reservation {
         return ReservationDTO.builder()
                 .id(id)
                 .offerID(offerID)
-                .authorID(authorID)
+                .userID(authorID)
                 .quantity(quantity)
                 .build();
     }

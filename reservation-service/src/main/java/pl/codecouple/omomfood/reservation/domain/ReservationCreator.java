@@ -13,7 +13,7 @@ class ReservationCreator {
     Reservation from(CreateReservationDTO createReservationDTO) {
         requireNonNull(createReservationDTO);
         return Reservation.builder()
-                .authorID(createReservationDTO.getAuthorID())
+                .authorID(createReservationDTO.getUserID())
                 .offerID(createReservationDTO.getOfferID())
                 .quantity(createReservationDTO.getQuantity())
                 .build();
@@ -23,7 +23,7 @@ class ReservationCreator {
         requireNonNull(reservation);
         return Reservation.builder()
                 .id(reservation.getId())
-                .authorID(reservation.getAuthorID())
+                .authorID(reservation.getUserID())
                 .offerID(reservation.getOfferID())
                 .quantity(reservation.getQuantity())
                 .build();

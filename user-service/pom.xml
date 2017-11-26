@@ -108,7 +108,7 @@
                 <version>1.1.4.RELEASE</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <baseClassForTests>pl.codecouple.omomfood.users.BaseClassForUserController</baseClassForTests>
+                    <baseClassForTests>pl.codecouple.omomfood.user.BaseClassForUserController</baseClassForTests>
                 </configuration>
             </plugin>
 		</plugins>

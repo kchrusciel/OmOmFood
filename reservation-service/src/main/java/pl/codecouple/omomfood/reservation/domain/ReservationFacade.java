@@ -1,7 +1,7 @@
 package pl.codecouple.omomfood.reservation.domain;
 
 import pl.codecouple.omomfood.reservation.dto.CreateReservationDTO;
-import pl.codecouple.omomfood.reservation.dto.GetAuthorDTO;
+import pl.codecouple.omomfood.reservation.dto.GetUserDTO;
 import pl.codecouple.omomfood.reservation.dto.GetOfferDTO;
 import pl.codecouple.omomfood.reservation.dto.ReservationDTO;
 import pl.codecouple.omomfood.reservation.exceptions.CannotCreateReservation;
@@ -16,30 +16,30 @@ import static java.util.stream.Collectors.toList;
  */
 public class ReservationFacade {
 
-    private final AuthorService authorService;
+    private final UserService userService;
     private final OfferService offerService;
-    private final AuthorCreator authorCreator;
+    private final UserCreator userCreator;
     private final OfferCreator offerCreator;
     private final ReservationRepository repository;
     private final ReservationCreator reservationCreator;
 
-    public ReservationFacade(AuthorService authorService,
+    public ReservationFacade(UserService userService,
                              OfferService offerService,
-                             AuthorCreator authorCreator,
+                             UserCreator userCreator,
                              OfferCreator offerCreator,
                              ReservationRepository repository, ReservationCreator reservationCreator) {
-        this.authorService = authorService;
+        this.userService = userService;
         this.offerService = offerService;
-        this.authorCreator = authorCreator;
+        this.userCreator = userCreator;
         this.offerCreator = offerCreator;
         this.repository = repository;
         this.reservationCreator = reservationCreator;
     }
 
     public ReservationDTO createReservation(CreateReservationDTO reservationToCreate) {
+        GetUserDTO getUserDTO = userCreator.from(reservationToCreate);
         GetOfferDTO getOfferDTO = offerCreator.from(reservationToCreate);
-        GetAuthorDTO getAuthorDTO = authorCreator.from(reservationToCreate);
-        if (offerService.isOfferAvailable(getOfferDTO) && authorService.isAuthorAvailable(getAuthorDTO)) {
+        if (userService.isUserAvailable(getUserDTO) && offerService.isOfferAvailable(getOfferDTO)) {
             return repository.save(reservationCreator.from(reservationToCreate)).dto();
         }
         throw new CannotCreateReservation();

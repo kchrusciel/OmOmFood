@@ -11,25 +11,35 @@ import org.springframework.web.client.RestTemplate;
 class ReservationConfiguration {
 
     @Bean
-    RestTemplate restTemplate(){
+    RestTemplate restTemplate() {
         return new RestTemplate();
     }
 
+    @Bean
+    OfferServiceGetter offerServiceGetter() {
+        return new OfferServiceGetter(restTemplate());
+    }
+
+    @Bean
+    UserServiceGetter userServiceGetter() {
+        return new UserServiceGetter(restTemplate());
+    }
+
     ReservationFacade reservationFacade() {
-        return reservationFacade(new AuthorService(restTemplate()),
-                                 new OfferService(restTemplate()),
-                                 new InMemoryReservationRepository());
+        return reservationFacade(new UserService(userServiceGetter()),
+                new OfferService(offerServiceGetter()),
+                new InMemoryReservationRepository());
     }
 
     @Bean
     ReservationFacade reservationFacade(
-            AuthorService authorService,
+            UserService userService,
             OfferService offerService,
-            ReservationRepository repository){
-        AuthorCreator authorCreator = new AuthorCreator();
+            ReservationRepository repository) {
+        UserCreator userCreator = new UserCreator();
         OfferCreator offerCreator = new OfferCreator();
         ReservationCreator reservationCreator = new ReservationCreator();
-        return new ReservationFacade(authorService, offerService, authorCreator, offerCreator, repository, reservationCreator);
+        return new ReservationFacade(userService, offerService, userCreator, offerCreator, repository, reservationCreator);
     }
 
 }

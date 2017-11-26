@@ -12,7 +12,7 @@ import lombok.*;
 public class CreateReservationDTO {
 
     private long offerID;
-    private long authorID;
+    private long userID;
     private long quantity;
 
 }

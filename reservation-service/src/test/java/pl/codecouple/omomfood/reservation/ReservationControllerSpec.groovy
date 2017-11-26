@@ -9,7 +9,7 @@ import org.springframework.test.web.servlet.MockMvc
 import pl.codecouple.omomfood.reservation.domain.ReservationFacade
 import pl.codecouple.omomfood.reservation.dto.CreateReservationDTO
 import pl.codecouple.omomfood.reservation.dto.ReservationDTO
-import pl.codecouple.omomfood.reservation.exceptions.AuthorNotFound
+import pl.codecouple.omomfood.reservation.exceptions.UserNotFound
 import pl.codecouple.omomfood.reservation.exceptions.OfferNotFound
 import spock.lang.Specification
 
@@ -35,7 +35,7 @@ class ReservationControllerSpec extends Specification {
     def "Should return 'Offer not found' message when offer ID not exists"() {
         given:
             def reservationToCreate = CreateReservationDTO.builder()
-                    .authorID(0)
+                    .userID(0)
                     .offerID(0)
                     .quantity(0)
                     .build()
@@ -49,27 +49,27 @@ class ReservationControllerSpec extends Specification {
                     .andExpect(status().reason("Offer not found"))
     }
 
-    def "Should return 'Author not found' message when author ID not exists"() {
+    def "Should return 'User not found' message when author ID not exists"() {
         given:
             def reservationToCreate = CreateReservationDTO.builder()
-                    .authorID(0)
+                    .userID(0)
                     .offerID(0)
                     .quantity(0)
                     .build()
-            when(facade.createReservation(reservationToCreate)).thenThrow(AuthorNotFound)
+            when(facade.createReservation(reservationToCreate)).thenThrow(UserNotFound)
         when:
             def result = reservation.perform(post("/reservations")
                     .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                     .content(objectMapper.writeValueAsString(reservationToCreate)))
         then:
             result.andExpect(status().isNotFound())
-                    .andExpect(status().reason("Author not found"))
+                    .andExpect(status().reason("User not found"))
     }
 
     def "Should create new reservation"() {
         given:
             def reservationToCreate = CreateReservationDTO.builder()
-                    .authorID(0)
+                    .userID(0)
                     .offerID(0)
                     .quantity(0)
                     .build()
@@ -77,7 +77,7 @@ class ReservationControllerSpec extends Specification {
                     .id(1)
                     .offerID(0)
                     .quantity(0)
-                    .authorID(0)
+                    .userID(0)
                     .build()
             when(facade.createReservation(reservationToCreate)).thenReturn(reservationToReturn)
         when:
