@@ -5,15 +5,29 @@ services:
         ports:
             - "5672:5672"
             - "15672:15672"
-    config-service:
-        build: ./config-service
-        ports:
-            - "8888:8888"
     discovery-service:
         build: ./discovery-service
         depends_on:
             - config-service
         ports:
             - "8761:8761"
-        links:
-            - config-service:config-service-docker
+    config-service:
+        build: ./config-service
+        ports:
+            - "8888:8888"
+    zipkin-service:
+        build: ./zipkin-service
+        ports:
+            - "9411:9411" 
+    reservation-service:
+        build: ./reservation-service
+        ports:
+            - "8010:8010" 
+    user-service:
+        build: ./user-service
+        ports:
+            - "8020:8020" 
+#    offer-service:
+#        build: ./offer-service
+#        ports:
+#            - "8030:8030" 

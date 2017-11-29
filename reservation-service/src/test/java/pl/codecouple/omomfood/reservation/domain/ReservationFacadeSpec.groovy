@@ -1,13 +1,11 @@
 package pl.codecouple.omomfood.reservation.domain
 
 import pl.codecouple.omomfood.reservation.dto.CreateReservationDTO
-import pl.codecouple.omomfood.reservation.dto.GetUserDTO
 import pl.codecouple.omomfood.reservation.dto.GetOfferDTO
+import pl.codecouple.omomfood.reservation.dto.GetUserDTO
+import pl.codecouple.omomfood.reservation.dto.OfferDTO
 import pl.codecouple.omomfood.reservation.dto.ReservationDTO
-import pl.codecouple.omomfood.reservation.exceptions.UserNotFound
-import pl.codecouple.omomfood.reservation.exceptions.CannotCreateReservation
-import pl.codecouple.omomfood.reservation.exceptions.OfferNotFound
-import pl.codecouple.omomfood.reservation.exceptions.ReservationNotFound
+import pl.codecouple.omomfood.reservation.exceptions.*
 import spock.lang.Specification
 /**
  * Created by CodeCouple.pl
@@ -77,7 +75,6 @@ class ReservationFacadeSpec extends Specification {
             result.size() == 1
             result.get(0).getUserID() == 1
             result.get(0).getOfferID() == 1
-            result.get(0).getQuantity() == 0
             result.get(0).getId() == 1
     }
 
@@ -100,7 +97,6 @@ class ReservationFacadeSpec extends Specification {
         then:
             result.getUserID() == 10
             result.getOfferID() == 1
-            result.getQuantity() == 0
     }
 
     def "Should throw CannotCreateReservation exception when problems occurs" () {
@@ -165,27 +161,62 @@ class ReservationFacadeSpec extends Specification {
                     .id(1)
                     .userID(1)
                     .offerID(1)
-                    .quantity(10)
+                    .assignedUsers(Collections.singletonList(1))
                     .build()
         when:
             def result = reservationFacade.update(reservationToUpdate)
         then:
-            result.getQuantity() == 10
+            result.assignedUsers.size() == 1
+            result.assignedUsers.get(0) == 1
     }
 
     def "Should partial update reservation" () {
-        given:
+        given: "Save to DB"
             def reservationToCreate = CreateReservationDTO.builder()
                     .userID(1)
                     .offerID(1)
-                    .quantity(10)
                     .build()
             repository.save(creator.from(reservationToCreate))
+        and: "Get offer from offer-service"
+            offerService.getOffer(GetOfferDTO.builder().offerID(1).build()) >> {
+                OfferDTO.builder()
+                        .offerID(1)
+                        .quantity(3)
+                        .assignedUsers(Collections.emptyList())
+                        .build()
+            }
+        and: "Fields to update"
             Map<String, Object> fieldsToUpdate = new HashMap<>()
-            fieldsToUpdate.put("quantity", 15)
+            fieldsToUpdate.put("assignedUsers", Collections.singletonList(1))
         when:
             def result = reservationFacade.updateFields(1, fieldsToUpdate)
         then:
-            result.getQuantity() == 15
+            result.assignedUsers.size() == 1
+            result.assignedUsers.get(0) == 1
+    }
+
+    def "Should throw 'CannotUpdateReservation' when reservation is full" () {
+        given: "Save to DB"
+            def reservationToCreate = CreateReservationDTO.builder()
+                    .userID(1)
+                    .offerID(1)
+                    .build()
+            repository.save(creator.from(reservationToCreate))
+        and: "Get offer from offer-service"
+            offerService.getOffer(GetOfferDTO.builder().offerID(1).build()) >> {
+                OfferDTO.builder()
+                        .offerID(1)
+                        .quantity(3)
+                        .assignedUsers(Collections.emptyList())
+                        .build()
+            }
+        and: "Fields to update"
+            Map<String, Object> fieldsToUpdate = new HashMap<>()
+            fieldsToUpdate.put("assignedUsers", Arrays.asList(1, 2, 3, 4))
+        when:
+            reservationFacade.updateFields(1, fieldsToUpdate)
+        then:
+            FulfilledReservation e = thrown()
+            e.message == "Reservation with ID: 1 is fulfilled"
     }
 }

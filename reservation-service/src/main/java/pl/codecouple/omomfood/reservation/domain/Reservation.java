@@ -4,11 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pl.codecouple.omomfood.infrastructure.jpa.Auditable;
 import pl.codecouple.omomfood.reservation.dto.ReservationDTO;
 
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.util.List;
 
 /**
  * Created by CodeCouple.pl
@@ -18,21 +21,22 @@ import javax.persistence.Id;
 @NoArgsConstructor
 @Data
 @Builder
-class Reservation {
+class Reservation extends Auditable {
 
     @Id
     @GeneratedValue
     private long id;
     private long offerID;
     private long authorID;
-    private long quantity;
+    @ElementCollection(targetClass = Integer.class)
+    private List<Integer> assignedUsers;
 
     ReservationDTO dto() {
         return ReservationDTO.builder()
                 .id(id)
                 .offerID(offerID)
                 .userID(authorID)
-                .quantity(quantity)
+                .assignedUsers(assignedUsers)
                 .build();
     }
 

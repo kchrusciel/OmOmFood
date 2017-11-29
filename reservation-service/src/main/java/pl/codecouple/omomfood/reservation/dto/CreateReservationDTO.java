@@ -1,6 +1,11 @@
 package pl.codecouple.omomfood.reservation.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.Min;
 
 /**
  * Created by CodeCouple.pl
@@ -11,8 +16,9 @@ import lombok.*;
 @Builder
 public class CreateReservationDTO {
 
+    @Min(1)
     private long offerID;
+    @Min(1)
     private long userID;
-    private long quantity;
 
 }

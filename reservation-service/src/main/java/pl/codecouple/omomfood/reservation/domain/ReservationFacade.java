@@ -1,10 +1,8 @@
 package pl.codecouple.omomfood.reservation.domain;
 
-import pl.codecouple.omomfood.reservation.dto.CreateReservationDTO;
-import pl.codecouple.omomfood.reservation.dto.GetUserDTO;
-import pl.codecouple.omomfood.reservation.dto.GetOfferDTO;
-import pl.codecouple.omomfood.reservation.dto.ReservationDTO;
+import pl.codecouple.omomfood.reservation.dto.*;
 import pl.codecouple.omomfood.reservation.exceptions.CannotCreateReservation;
+import pl.codecouple.omomfood.reservation.exceptions.FulfilledReservation;
 
 import java.util.List;
 import java.util.Map;
@@ -69,8 +67,13 @@ public class ReservationFacade {
 
     public ReservationDTO updateFields(long id, Map<String, Object> fieldsToUpdate) {
         Reservation reservation = repository.findByIdOrThrow(id);
-        if (fieldsToUpdate.containsKey("quantity") && fieldsToUpdate.get("quantity") instanceof Integer) {
-            reservation.setQuantity(Integer.class.cast(fieldsToUpdate.get("quantity")));
+        if (fieldsToUpdate.containsKey("assignedUsers") && fieldsToUpdate.get("assignedUsers") instanceof List) {
+            List<Integer> assignedUsers = List.class.cast(fieldsToUpdate.get("assignedUsers"));
+            OfferDTO offer = offerService.getOffer((GetOfferDTO.builder().offerID(id).build()));
+            if (offer.getQuantity() < assignedUsers.size()) {
+                throw new FulfilledReservation(String.format("Reservation with ID: %d is fulfilled", id));
+            }
+            reservation.setAssignedUsers(assignedUsers);
         }
         return repository.save(reservation).dto();
     }

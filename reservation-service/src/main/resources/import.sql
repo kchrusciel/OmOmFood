@@ -1,0 +1,1 @@
+insert into reservation (id, offerID, authorID) values (null, 1, 2, 3);

@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
  * Created by CodeCouple.pl
  */
@@ -15,5 +17,7 @@ import lombok.NoArgsConstructor;
 public class OfferDTO {
 
     private long offerID;
+    private long quantity;
+    private List<Integer> assignedUsers;
 
 }

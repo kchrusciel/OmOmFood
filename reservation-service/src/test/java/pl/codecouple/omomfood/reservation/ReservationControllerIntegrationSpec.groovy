@@ -36,7 +36,6 @@ class ReservationControllerIntegrationSpec extends Specification {
     def "Should return user not found" () {
         given:
             def createReservation = CreateReservationDTO.builder()
-                    .quantity(1)
                     .offerID(1)
                     .userID(2)
                     .build()
@@ -51,7 +50,6 @@ class ReservationControllerIntegrationSpec extends Specification {
     def "Should return offer not found" () {
         given:
             def createReservation = CreateReservationDTO.builder()
-                    .quantity(1)
                     .offerID(2)
                     .userID(1)
                     .build()
@@ -67,7 +65,6 @@ class ReservationControllerIntegrationSpec extends Specification {
     def "Should create new reservation"() {
         given:
             def createReservation = CreateReservationDTO.builder()
-                    .quantity(1)
                     .offerID(1)
                     .userID(1)
                     .build()

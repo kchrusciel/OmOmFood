@@ -3,6 +3,8 @@ package pl.codecouple.omomfood.reservation.domain;
 import pl.codecouple.omomfood.reservation.dto.CreateReservationDTO;
 import pl.codecouple.omomfood.reservation.dto.ReservationDTO;
 
+import java.util.Collections;
+
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -15,7 +17,7 @@ class ReservationCreator {
         return Reservation.builder()
                 .authorID(createReservationDTO.getUserID())
                 .offerID(createReservationDTO.getOfferID())
-                .quantity(createReservationDTO.getQuantity())
+                .assignedUsers(Collections.emptyList())
                 .build();
     }
 
@@ -25,7 +27,7 @@ class ReservationCreator {
                 .id(reservation.getId())
                 .authorID(reservation.getUserID())
                 .offerID(reservation.getOfferID())
-                .quantity(reservation.getQuantity())
+                .assignedUsers(reservation.getAssignedUsers())
                 .build();
     }
 

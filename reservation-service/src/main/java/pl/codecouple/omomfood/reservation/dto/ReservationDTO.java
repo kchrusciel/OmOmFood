@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Min;
+import java.util.List;
+
 /**
  * Created by CodeCouple.pl
  */
@@ -14,9 +17,13 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ReservationDTO {
 
+    @Min(1)
     private long id;
+    @Min(1)
     private long offerID;
+    @Min(1)
     private long userID;
-    private long quantity;
+
+    private List<Integer> assignedUsers;
 
 }

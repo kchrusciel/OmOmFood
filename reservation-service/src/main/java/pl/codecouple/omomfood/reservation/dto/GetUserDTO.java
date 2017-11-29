@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Min;
+
 /**
  * Created by CodeCouple.pl
  */
@@ -14,6 +16,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class GetUserDTO {
 
+    @Min(1)
     private long userID;
 
 }
