@@ -7,5 +7,5 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
     && rm dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 ADD target/user-service.jar user-service.jar
 EXPOSE 8020
-EXPOSE 8002
-ENTRYPOINT ["dockerize", "-timeout", "5m", "-wait", "http://config-service:8888/health", "java", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8002", "-jar", "user-service.jar"]
+EXPOSE 8021
+ENTRYPOINT ["dockerize", "-timeout", "5m", "-wait", "http://config-service:8888/health", "java", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8021", "-jar", "user-service.jar"]

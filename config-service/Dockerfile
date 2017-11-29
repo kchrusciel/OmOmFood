@@ -7,5 +7,5 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
     && rm dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 ADD target/config-service.jar config-service.jar
 EXPOSE 8888
-EXPOSE 8002
-ENTRYPOINT ["dockerize", "-timeout", "5m", "-wait", "http://discovery-service:8761", "java", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8002", "-jar", "config-service.jar"]
+EXPOSE 8889
+ENTRYPOINT ["dockerize", "-timeout", "5m", "-wait", "http://discovery-service:8761", "java", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8889", "-jar", "config-service.jar"]

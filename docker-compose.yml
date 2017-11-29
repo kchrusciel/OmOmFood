@@ -15,18 +15,22 @@ services:
         build: ./config-service
         ports:
             - "8888:8888"
+            - "8889:8889"
     zipkin-service:
         build: ./zipkin-service
         ports:
             - "9411:9411" 
+            - "9412:9412" 
     reservation-service:
         build: ./reservation-service
         ports:
             - "8010:8010" 
+            - "8011:8011" 
     user-service:
         build: ./user-service
         ports:
             - "8020:8020" 
+            - "8021:8021" 
 #    offer-service:
 #        build: ./offer-service
 #        ports:

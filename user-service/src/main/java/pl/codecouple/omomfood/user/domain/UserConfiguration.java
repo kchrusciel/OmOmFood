@@ -10,8 +10,9 @@ import org.springframework.context.annotation.Configuration;
 class UserConfiguration {
 
     @Bean
-    UserFacade userFacade() {
-        return new UserFacade();
+    UserFacade userFacade(UserRepository userRepository) {
+        UserCreator userCreator = new UserCreator();
+        return new UserFacade(userRepository, userCreator);
     }
 
 }
