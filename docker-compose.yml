@@ -16,6 +16,11 @@ services:
         ports:
             - "8888:8888"
             - "8889:8889"
+    api-gateway-service:
+        build: ./api-gateway-service
+        ports:
+            - "80:80"
+            - "81:81"
     zipkin-service:
         build: ./zipkin-service
         ports:
