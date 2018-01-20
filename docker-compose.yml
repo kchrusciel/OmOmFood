@@ -5,6 +5,10 @@ services:
         ports:
             - "5672:5672"
             - "15672:15672"
+    redis:
+        image: redis:4-alpine
+        ports:
+            - "6379:6379"
     discovery-service:
         build: ./discovery-service
         depends_on:
@@ -16,16 +20,16 @@ services:
         ports:
             - "8888:8888"
             - "8889:8889"
-    api-gateway-service:
-        build: ./api-gateway-service
-        ports:
-            - "80:80"
-            - "81:81"
     zipkin-service:
         build: ./zipkin-service
         ports:
             - "9411:9411" 
             - "9412:9412" 
+    api-gateway-service:
+        build: ./api-gateway-service
+        ports:
+            - "80:80"
+            - "81:81"
     reservation-service:
         build: ./reservation-service
         ports:
@@ -36,7 +40,8 @@ services:
         ports:
             - "8020:8020" 
             - "8021:8021" 
-#    offer-service:
-#        build: ./offer-service
-#        ports:
-#            - "8030:8030" 
+    offer-service:
+        build: ./offer-service
+        ports:
+            - "8030:8030" 
+            - "8031:8031" 
