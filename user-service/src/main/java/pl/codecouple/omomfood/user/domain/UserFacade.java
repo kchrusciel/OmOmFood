@@ -4,6 +4,7 @@ import pl.codecouple.omomfood.user.dto.CreateUserDTO;
 import pl.codecouple.omomfood.user.dto.UserDTO;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -20,7 +21,8 @@ public class UserFacade {
     }
 
     public UserDTO getUserById(long id) {
-        return userRepository.findById(id).dto();
+        User userFromDb = userRepository.findByIdOrThrow(id);
+        return userFromDb.dto();
     }
 
     public List<UserDTO> findAll() {
@@ -29,8 +31,27 @@ public class UserFacade {
                 .collect(Collectors.toList());
     }
 
-    public UserDTO save(CreateUserDTO createUserDTO) {
-        return userRepository.save(userCreator.from(createUserDTO)).dto();
+    public UserDTO createUser(CreateUserDTO userToCreate) {
+        return userRepository.save(userCreator.from(userToCreate)).dto();
     }
 
+    public void delete(long id) {
+        userRepository.findByIdOrThrow(id);
+        userRepository.deleteById(id);
+    }
+
+    public UserDTO update(UserDTO userToUpdate) {
+        userRepository.findByIdOrThrow(userToUpdate.getId());
+        return userRepository.save(userCreator.from(userToUpdate)).dto();
+    }
+
+    public UserDTO updateFields(long id, Map<String, Object> fieldsToUpdate) {
+        User user = userRepository.findByIdOrThrow(id);
+        if (fieldsToUpdate.containsKey("name")) {
+            user.setName(String.valueOf(fieldsToUpdate.get("name")));
+        } else if (fieldsToUpdate.containsKey("surname")) {
+            user.setSurname(String.valueOf(fieldsToUpdate.get("surname")));
+        }
+        return userRepository.save(user).dto();
+    }
 }

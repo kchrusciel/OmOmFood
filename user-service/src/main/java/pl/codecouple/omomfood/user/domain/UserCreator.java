@@ -1,6 +1,7 @@
 package pl.codecouple.omomfood.user.domain;
 
 import pl.codecouple.omomfood.user.dto.CreateUserDTO;
+import pl.codecouple.omomfood.user.dto.UserDTO;
 
 import static java.util.Objects.requireNonNull;
 
@@ -18,4 +19,13 @@ class UserCreator {
                 .build();
     }
 
+    User from(UserDTO userDTO) {
+        requireNonNull(userDTO);
+        return User.builder()
+                .id(userDTO.getId())
+                .username(userDTO.getUsername())
+                .name(userDTO.getName())
+                .surname(userDTO.getSurname())
+                .build();
+    }
 }
