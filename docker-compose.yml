@@ -23,8 +23,13 @@ services:
     zipkin-service:
         build: ./zipkin-service
         ports:
-            - "9411:9411" 
-            - "9412:9412" 
+            - "9411:9411"
+            - "9412:9412"
+    auth-service:
+        build: ./auth-service
+        ports:
+            - "9191:9191"
+            - "9192:9192"
     api-gateway-service:
         build: ./api-gateway-service
         ports:
