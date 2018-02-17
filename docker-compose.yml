@@ -20,6 +20,8 @@ services:
         ports:
             - "8888:8888"
             - "8889:8889"
+        environment:
+            - ENCRYPT_KEY
     zipkin-service:
         build: ./zipkin-service
         ports:
